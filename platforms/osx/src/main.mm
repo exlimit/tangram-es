@@ -101,7 +101,7 @@ using namespace Tangram;
 + (void)startFileEdit
 {
     NSString* file = [NSString stringWithUTF8String:GlfwApp::sceneFile.c_str()];
-    NSURL* url = [NSURL fileURLWithPath:file];
+    NSURL* url = [NSURL URLWithString:file];
     [[NSWorkspace sharedWorkspace] openURL:url];
 }
 
