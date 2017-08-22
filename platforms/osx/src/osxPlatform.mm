@@ -101,20 +101,10 @@ std::vector<char> loadNSFont(NSFont* _font) {
         return {};
     }
 
-    CGFontRef fontRef = CGFontCreateWithFontName((CFStringRef)_font.fontName);
+    auto length = [_font.fontName length];
+    auto fontName = [_font.fontName UTF8String];
 
-    if (!fontRef) {
-        return {};
-    }
-
-    std::vector<char> data = [TGFontConverter fontDataForCGFont:fontRef];
-
-    CGFontRelease(fontRef);
-
-    if (data.empty()) {
-        LOG("CoreGraphics font failed to decode");
-    }
-
+    std::vector<char> data(fontName, fontName + length);
     return data;
 }
 
@@ -142,10 +132,7 @@ std::vector<FontSourceHandle> OSXPlatform::systemFontFallbacksHandle() const {
             NSString* fontName = familyFont[0];
             NSString* fontStyle = familyFont[1];
             if ( ![fontName containsString:@"-"] || [fontStyle isEqualToString:@"Regular"]) {
-                handles.emplace_back([fontName]() {
-                    auto data = loadNSFont([NSFont fontWithName:fontName size:1.0]);
-                    return data;
-                });
+                handles.emplace_back(fontName.UTF8String, true);
                 break;
             }
         }
@@ -212,6 +199,7 @@ std::vector<char> OSXPlatform::systemFont(const std::string& _name, const std::s
         }
     }
 
+    
     return loadNSFont(font);
 }
 

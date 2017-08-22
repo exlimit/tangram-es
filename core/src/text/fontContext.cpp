@@ -41,7 +41,7 @@ void FontContext::loadFonts() {
         if (fallback.path.empty()) {
             source = alfons::InputSource(fallback.load);
         } else {
-            source = alfons::InputSource(fallback.path);
+            source = alfons::InputSource(fallback.path, fallback.appleFont);
         }
 
         for (int i = 0, size = BASE_SIZE; i < MAX_STEPS; i++, size += STEP_SIZE) {
@@ -289,7 +289,7 @@ void FontContext::releaseFonts() {
         for (auto& face : font->faces()) {
             alfons::InputSource& fontSource = face->descriptor().source;
 
-            if (fontSource.isUri() || fontSource.hasSourceCallback()) {
+            if (fontSource.isAppleFont() || fontSource.isUri() || fontSource.hasSourceCallback()) {
                 fontSource.clearData();
             }
         }
